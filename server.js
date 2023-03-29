@@ -136,13 +136,31 @@ const server = http.createServer((request, response) => {
 
     request.on("end", () => {
       const obj = JSON.parse(data.toString());
-      Users[idx] = obj;
+      //this updates the entire index regardless of the keys
+      // Users[idx] = obj;
+      //this will only update w.r.t the keys
+      // Users[idx].name = obj.name
+      // Users[idx].age = obj.age
+      Users[idx] ={
+        ...Users[idx],
+        ...obj}
     });
   } else if (
     request.method === "DELETE" && paths[1] === "users" && paths[2]
   ) {
-    const idx = paths[2];
-    Users.splice(idx, 1);
+    //this delets w.r.t id
+    // const idx = paths[2];
+    // Users.splice(idx, 1);
+    //this deletes w.r.t names
+    const name = paths[2]
+  
+    const idx = Users.findIndex(element => element.name.toLowerCase() === name.toLowerCase())
+    if (idx === -1){
+    response.write("user not found")
+    }else{
+    Users.splice(idx, 1)
+    response.write("user deleted successfully")
+    }
   } else {
     response.write("Not Found");
   }
